@@ -1,0 +1,66 @@
+/* ------ シンプルなAPIを作って操作しよう。------ */
+
+json-serverとは？
+    jsonファイルを、APIサーバーにできるツール。
+    json-serverは、簡単にREST APIを構築できるツールです。
+    ローカルマシン上にJSONファイルを置くだけで、RESTfulなAPIを作成し、
+    GET、POST、PUT、DELETEなどのHTTPリクエストを使用してデータの取得、作成、更新、削除を行うことができます。
+
+npm と npx の違い。
+ npmはパッケージ管理、npxはパッケージ実行
+ npm 経由でインストールされたパッケージは npm 経由で実行される必要があります。
+
+環境構築
+npm -v 
+node -v
+npm install -g json-server
+json-server起動
+    json-server --watch <jsonファイル名> -p <ポート番号>
+    npx json-server --watch db.json -p 3000
+
+
+/* ------ 実際にコマンドを叩いてみる。------ */
+
+http GETメソッド
+jsonファイルの中身を取得することができた。
+curl -X GET "http://localhost:3000/episodes" -v
+curl -X <メソッド名> "<参照先jsonファイル/id>"
+    [
+        {
+            "id": 1,
+            "title": "始まりの終わりと終わりの始まり"
+        },
+        {
+            "id": 2,
+            "title": "再会の魔女"
+        },
+        {
+            "id": 3,
+            "title": "ゼロから始まる異世界生活"
+        }
+    * Connection #0 to host localhost left intact
+    ]%     
+
+
+http POSTメソッド
+jsonファイルに、json形式のデータを追加する。
+curl -X POST -H "Content-Type: application/json" -d '{"id": 4, "title":"ロズワール帝の団員"}' "http://localhost:3000/episodes"
+curl -X <メソッド名> -H <データ形式> -d <追加するデータ内容> <アクセス先jsonファイル>
+    {
+    "id": 4,
+    "title": "ロズワール帝の団員"
+    }% 
+同じ id のjsonデータを追加することはできません。( Error: Insert failed, duplicate id )
+
+http PUTメソッド
+jsonファイルに、json形式のデータを置き換える。
+curl -X PUT -H "Content-Type: application/json" -d '{"id":4,"title": "ロズワール帝の争乱"}' "http://localhost:3000/episodes/4" -v
+curl -X <メソッド名> -H <データ形式> -d <追加するデータ内容> <アクセス先jsonファイル/挿入先id>
+    {
+    "id": 4,
+    "title": "ロズワール帝の争乱"
+    * Connection #0 to host localhost left intact
+    }%
+jsonファイルの id を、別の値に変更することはできません。
+
+

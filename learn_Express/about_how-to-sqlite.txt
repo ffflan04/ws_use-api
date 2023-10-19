@@ -1,0 +1,54 @@
+/* ------ データベース設定 ------ */
+
+sqlite3 基本操作など。
+
+sqlite3とは？
+軽量なデータベースで、サーバーとしてではなくアプリケーションに組み込んで利用。（スマホアプリなどにも利用される）
+『1データベース、1ファイル』で扱いやすい。ファイルをコピーすればバックアップが取れるし、削除すれば消える。
+ちょっとしたアプリケーションを作る場合に便利
+
+sqlite3の設定
+( 別に大文字じゃなくても大丈夫です。)
+
+$ mkdir learn_api/app/db
+app.jsと同じディレクトリ内に、db ディレクトリを作成します。
+
+$ sqlite3 ./app/db/<データベース名 例: database.db>
+sqlite3 を起動させるコマンド。
+ファイルが存在すれば開くし、なければ新規作成します。
+
+SQLiteでテーブルを作成する時の基本となる構文は下記の通りです
+CREATE TABLE テーブル名(カラム名1, カラム名2, ...);
+
+> CREATE TABLE users（
+> id INTEGER NOT NULL PRIMARY KEY,
+> name TEXT NOT NULL
+> profile TEXT 
+> created_at TEXT NOT NULL DEFAULT (DATETIME('now','localtime'))
+> updated_at TEXT NOT NULL DEFAULT (DATETIME('now','localtime'))
+> date_of_birth TEXT
+> ）;
+
+.schema [table name]
+カラムの確認
+
+INSERT INTO <テーブル名> (<カラム名>) VALUES (<値>);
+INSERT INTO users (name,profile) VALUES ("torahack","i am a front-end-enginear");
+データベースに、データを挿入
+
+SELECT * FROM <テーブル名>
+    全てのカラムからテーブルデータを抽出。
+SELECT カラム名1, カラム名2, ... FROM テーブル名 WHERE 条件式;
+    条件式に合う、データをカラムから抽出。
+SELECT カラム名 , ... FROM テーブル名 WHERE カラム名 LIKE "%%";
+    条件式にLIKEを用いて、パターンマッチングを行えます。
+    
+
+DROP TABLE <テーブル名>;
+テーブルを削除。
+
+UPDATE テーブル名 SET カラム名1 = 値1, カラム名2 = 値2, ... WHERE 条件式;
+テーブルデータの更新
+
+DELETE FROM テーブル名 WHERE 条件式;
+テーブルデータの削除

@@ -1,0 +1,104 @@
+/* ------ 実践編の前提 ------ */
+
+SNSのシンプルなAPIを設計、開発をします。
+RESTfulなAPIにします。
+・GET, POST, PUT, DELETE あり、
+使用する技術
+・バックエンド言語：Node.js
+・Webサーバー：Express
+・データベース：sqlite3
+
+
+モジュールの概要
+今回はwebAPIサーバーを、Node.jsと、Expressを使って開発します。
+Expressを使うことで最小の構成でサーバーを構築できる。
+・Express = Node.jsのwebアプリケーションフレームワーク
+    Expressはnpmでインストールできるパッケージのひとつ
+    Expressを使うことで、REST APIを、効率よく作ることができます。
+    Expressを使うことで、ゴリゴリとURI解析のコードを自前で書く必要がなくなる。
+・sqlite3 = 軽量なRDB(個人開発向け)
+    sqlite3は、複数の同時接続を裁くことが苦手なので大規模開発には不向き。
+・body-parser = httpリクエストなどの、Message-bodyを解析する、body-parser
+    HTTPヘッダーに必要な情報（メッセージボディの文字数や文字コード等）を一緒にセットして送信された情報から
+    メッセージボディを特定し、HTTPヘッダーに指定された情報をもとに復元してサーバー側で処理します。
+    2021年1月時点のExpressでは、body-parserが標準モジュールとして同梱されており、require宣言が不要となりました。
+・node-dev = ファイル編集を検知してサーバーを再起動(ホットリロード)
+    このnode-devがないと、サーバー建てられなかったです。なんでかわからんけど。
+・EJS(テンプレートエンジン)
+    テンプレートエンジン = テンプレートと呼ばれる雛形のファイルをもとに、外部のデータと組み合わせたファイルを生成できるソフトウェアのことを言います。
+
+/* ------ 環境構築をします。------ */
+
+自分のプロジェクトフォルダで、$ npm init
+npm initコマンドはいくつかの質問をおこない、ユーザーの回答に応じてpackage.jsonファイルを生成します。
+package.jsonはこのプロジェクトの名前、概要、そして特にパッケージの依存関係を定義する設定ファイルです。
+
+$ npm install --save express sqlite3 body-parser
+で、プロジェクトフォルダの中で使うnpmのパッケージをインストールします。
+先のnpm install時に--saveオプションを指定するとこのように依存関係を自動的に記録してくれます。
+
+そして、
+$ npm install -g node-dev
+package.jsonの、"script" => ショートカットみたいなもの
+"start": "node-dev app/app.js"
+npm start コマンドで、node-dev のショートカットを登録します。
+ちなみに、
+サーバープロセスを起動するのは、
+node-devでは、なくても、
+$ node app.js
+で、サーバーを起動することができますが、
+app.jsの変更内容は、APIサーバーに自動で反映されるわけではありません。
+
+
+そして、
+$ mkdir app
+$ touch app.js
+プロジェクトフォルダの中に、app というディレクトリを作って、
+その中に、メインのファイルとなる app.js をつくります。
+
+/* ------ データベース設定 ------ */
+
+sqlite3 基本操作など。
+
+sqlite3とは？
+軽量なデータベースで、サーバーとしてではなくアプリケーションに組み込んで利用。（スマホアプリなどにも利用される）
+『1データベース、1ファイル』で扱いやすい。ファイルをコピーすればバックアップが取れるし、削除すれば消える。
+ちょっとしたアプリケーションを作る場合に便利
+
+sqlite3の設定
+( 別に大文字じゃなくても大丈夫です。)
+
+$ mkdir learn_api/app/db
+app.jsと同じディレクトリ内に、db ディレクトリを作成します。
+
+$ sqlite3 ./app/db/<データベース名 例: database.db>
+sqlite3 を起動させるコマンド。
+ファイルが存在すれば開くし、なければ新規作成します。
+
+SQLiteでテーブルを作成する時の基本となる構文は下記の通りです
+CREATE TABLE テーブル名(カラム名1, カラム名2, ...);
+
+> CREATE TABLE users（
+> id INTEGER NOT NULL PRIMARY KEY,
+> name TEXT NOT NULL
+> profile TEXT 
+> created_at TEXT NOT NULL DEFAULT (DATETIME('now','localtime'))
+> updated_at TEXT NOT NULL DEFAULT (DATETIME('now','localtime'))
+> date_of_birth TEXT
+> ）;
+
+.schema [table name]
+カラムの確認
+
+INSERT INTO <テーブル名> (<カラム名>) VALUES (<値>);
+INSERT INTO users (name,profile) VALUES ("torahack","i am a front-end-enginear");
+データベースに、データを挿入
+
+SELECT カラム名1, カラム名2, ... FROM テーブル名;
+SELECT * FROM <テーブル名>
+テーブルデータを確認。
+
+DROP TABLE <テーブル名>;
+テーブルを削除。
+
+

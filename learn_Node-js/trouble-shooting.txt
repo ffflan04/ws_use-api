@@ -1,0 +1,84 @@
+/* ---------------------------------------------------------------- */
+// fsモジュールで読み込む、ファイルパスが間違ってた。
+
+// 先頭に、/ があるかどうか確認して。
+const html = fs.readFileSync(__dirname + '../static/index.html',(err,data)=>{
+})
+// 正解例
+const html = fs.readFileSync(__dirname + '/../static/index.html',(err,data)=>{
+})
+
+/* ---------------------------------------------------------------- */
+// res.writeHead()は、一つのみです。
+
+case '/cont01':
+    fs.readFile(__dirname + '/../static/style.css','utf8',(err,data)=>{
+        res.writeHead(200,{'Content-Type':'text/css'})
+        res.write(data)
+        res.end()
+    })
+    fs.readFile(__dirname + '/../static/index.html','utf-8',(err,data)=>{
+        res.writeHead(200,{'Content-Type':'text/html'})
+        res.write(data)
+        res.end()
+    })
+    break;
+/* ---------------------------------------------------------------- */
+// fs.readFileSyncは、値を、外部で運用するときに使え。
+
+// fsメソッドが、非同期だと、サーバーをビルドしたときに、処理がはしる。
+// そして、肝心な、httpレスポンスを返すときに、undefinedを、返しやがるのさ。
+const html = fs.readFile(__dirname + '/../static/index.html','utf8',(err,data)=>{
+    if(err){console.log(err)}
+    console.log('よみこんだっちゃ')
+})
+/* ---------------------------------------------------------------- */
+// 文字列と一緒じゃないと出力できない。
+
+// name属性で、postされたデータは、文字列を足さないと、16進数のバイト列で出力されやがる。
+req.on('data',(data)=>{
+    console.log('ASCII文字に変換' + data)
+})
+/* ---------------------------------------------------------------- */
+// コールバック関数は、最後に実行されるんだろ？
+
+// req.onで設定したイベントハンドラのコールバック関数は、後で実行された。
+// formを受信した時の処理
+const formInspect = (req,res)=>{
+    let ASCII = ''
+    req.on('data',(data)=>{
+        ASCII = '' + data
+        ASCII = qs.parse(ASCII)
+        console.log('関数2')
+    })
+    console.log('関数1')
+    res.end(ASCII)
+}
+
+/* ---------------------------------------------------------------- */
+// デフォルトで、prototypeメソッドを持たない、オブジェクトが稀にある。
+
+// prototypeメソッドを持たないオブジェクトに、toStringメソッドが使えない。
+req.on('data',(data)=>{
+    ASCII = '' + data
+    ASCII = qs.parse(ASCII)
+    console.log(ASCII) // [Object: null prototype] { message: 'pig' }
+    console.log(JSON.stringify(ASCII)) // {"message":"pig"}
+    console.log(ASCII.toString()) // TypeError: ASCII.toString is not a function
+    res.end()
+})
+/* ---------------------------------------------------------------- */
+// 日本語を、res.end()で返すと、Shift-Jisエンコーディングされて返されるのだ。
+
+req.on('end',()=>{
+        ASCII = qs.parse(ASCII)
+        console.log(ASCII.message)
+        let j_Text = new TextEncoder('utf-8').encode(ASCII.message)
+        let text = new TextDecoder('shift-jis').decode(j_Text)
+        res.end(text)
+})
+
+/* ---------------------------------------------------------------- */
+/* ---------------------------------------------------------------- */
+/* ---------------------------------------------------------------- */
+/* ---------------------------------------------------------------- */

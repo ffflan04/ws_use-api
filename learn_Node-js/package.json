@@ -1,0 +1,16 @@
+{
+  "name": "learn_node",
+  "version": "1.0.0",
+  "description": "",
+  "main": "about_Node-js-Method.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "ejs": "ejs-cli --base-dir ejs/ 'index.ejs' --out dest/"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "ejs-cli": "^2.2.3"
+  }
+}

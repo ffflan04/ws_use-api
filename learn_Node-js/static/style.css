@@ -1,0 +1,21 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+main .main-text:nth-child(0) {
+    color: red;
+}
+main .main-text:nth-child(1) {
+    color: blue;
+}
+main .main-text:nth-child(2) {
+    color: yellow;
+}
+main .circle {
+    width: 200px;
+    height: 200px;
+    background-color: gray;
+    border-radius: 50%;
+}

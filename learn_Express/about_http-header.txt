@@ -1,0 +1,44 @@
+/* ------ ヘッダを制するものはhttpを制する。------ */
+
+ヘッダとは、
+httpリクエスト、レスポンスのメタデータ( 付加情報 )
+
+
+MIME(Multipurpose Internet Mail Extensions)メディアタイプの指定
+・Content-Type(type/subtype形式)ヘッダでメディアタイプの指定
+・charsetパラメータは文字エンコーディングを指定
+例：Content-type: application/json; charset=utf-8
+その他、type/subtype形式、例
+    text/plain => 人が読んで直接理解できる。
+    image/jpeg => 画像データ
+    audio/mpeg => 音声データ
+    video/mp4 => 動画データ
+    application/json => その他のデータ
+
+
+様々なヘッダ情報
+・Content-Language: ja-JP => リソースを表現する自然言語
+・Accept text/html, application/xml => クライアントが処理可能なメディアタイプ
+・Content-Length: 447 => レスポンスボディのサイズ
+・Transfer-Encoding: chunked => 大きなデータをチャンク(分けて)転送する。
+
+
+HTTP認証のためのヘッダ
+・リソースのアクセスに制限がかかってる場合、認証が必要
+・Authorizationヘッダに認証情報を付与する。
+認証方法一覧
+    Basic認証：簡単にデコードできる。httpsによる通信暗号化が必要
+    DIgest認証：メッセージは暗号化されないのでhttpsによる通信暗号化が必要
+    Bearer認証：OAuth2.0で保護されたリソースなどの認証に使う。(よく使われる)
+
+
+キャッシュとは？
+・リソースを再利用できる仕組み
+・現在の仕様ではCache-Controlヘッダを使うことがほとんど
+・検証と再取得の条件を設定する。
+指定方法
+(検証 = キャッシュが最新のものか検証すること)
+    Cache-Control: no-store => キャッシュしない
+    Cache-Control: no-cache => キャッシュするが再検証する
+    Cache-Control: max-age=86400 => キャッシュの有効期限を設定
+    Cache-Control: must-revalidate => 必ず検証する

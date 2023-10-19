@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scroll-Website</title>
+    <link rel="stylesheet" href="style/style.css">
+
+</head>
+<body>
+    <div class="title">
+        <h1>Mount Up Your Life</h1>
+    </div>
+    <section>
+        <h2>Cross Scroll</h2>
+        <div class="img-wrap">
+            <div class="img"></div>
+        </div>
+    </section>
+    <section>
+        <h2>Cross Scroll</h2>
+        <div class="img-wrap">
+            <div class="img"></div>
+        </div>
+    </section>
+    <section>
+        <h2>Cross Scroll</h2>
+        <div class="img-wrap">
+            <div class="img"></div>
+        </div>
+    </section>
+    <section>
+        <h2>Cross Scroll</h2>
+        <div class="img-wrap">
+            <div class="img"></div>
+        </div>
+    </section>
+    <section>
+        <h2>Cross Scroll</h2>
+        <div class="img-wrap">
+            <div class="img"></div>
+        </div>
+    </section>
+
+    <script>
+        // スプレッド構文というもので書いていきます。
+        // スプレッド構文で、要素を取得すると、配列で取得することができます。
+        const $img_wrap = [...document.querySelectorAll('.img-wrap')]
+        const $h2 = [...document.querySelectorAll('h2')]
+        const $title = document.querySelector('.title')
+        
+        // Intersection Observerとは、簡単に言うと、
+        // どこにいるのか監視して、特定の位置にきたら、
+        // コールバック関数を呼び出します。
+
+        // 監視対象を捕捉したとき、呼びだす関数
+        // 具体的には、activeクラスを付与して、opacityを1にする処理です。
+        const setItemActive = (entries)=>{
+        entries.forEach((entry)=>{
+            // entry.isIntersecting = 監視対象を捕捉したかどうか？のbool値をもつ。
+            if (entry.isIntersecting){
+                entry.target.classList.add("active")
+            }else{
+                entry.target.classList.remove("active")
+            }
+        });
+        }
+
+        // optionsの中身を記述することで。
+        // コールバック関数が呼びだされる条件とかを決められます。
+        const options = {
+            rootMargin: "0px", // これは、よくわからん。
+            threshold: 0.5 // コールバック関数を発火させる条件となる、捕捉範囲を設定できる。
+        }
+
+        // 第一引数に、任意のコールバック関数、第二引数に、options が、必須です。
+        const observer = new IntersectionObserver(setItemActive, options)
+
+        // .observeメソッドで、DOM要素を監視します。笑笑
+        // ディスプレイ内に存在するとき、関数を発火。
+        observer.observe($title)
+
+        // こちらは、javascriptでcssを付与してますが、別に、javascriptで、
+        // cssを記述しなくても構いません。
+        // ここでの重要な処理は、アニメーション対象のDOM要素に、observerメソッドを当ててることです。
+        $img_wrap.map((item,index)=>{
+            item.children[0].style.backgroundImage = `url(./images/${index + 1}.jpg)`
+            // 三項演算子を使ってます。三項演算子 = if文で事足ります。
+            index % 2 == 0 ? (item.style.left = "55%") : (item.style.left = "5%")
+            // observeメソッドは、任意の要素、それぞれに当てて下さい。
+            observer.observe(item)
+        })
+
+        $h2.map((h2, index)=>{
+            index % 2 == 0 ? h2.style.left = "45%" : h2.style.left = "35%"
+            observer.observe(h2)
+        })
+    </script>
+</body>
+</html>

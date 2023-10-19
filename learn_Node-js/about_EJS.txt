@@ -1,0 +1,120 @@
+
+・EJSとは？
+    EJSとは主にJavaScriptで使用されるテンプレートエンジンです。
+    Webページを構成するHTMLを生成するための型のようなものです．
+
+・EJSを使うメリット
+    htmlをパーツ化してヘッダーやフッターなどを別ファイルに作れる
+    変数を設定して、それを反映したhtmlが生成できる
+    html内でループ処理を書いて楽に記述できる
+
+・エスケープとは？
+    エスケープとは、`¥`や`>`などの特殊文字を記号文字列に置き換える処理を言います。
+    特殊文字をタグとして使いたい場合は、<%- %>を用いましょう。
+    また、ただ文字列として特殊文字を用いたい場合は<%= %>を用いましょう。
+    <p><%= script %></p> // >> <p>&lt;script&gt;エスケープ&lt;/script&gt;</p>
+    <p><%- script %></p> // >> <p><script>エスケープ</script></p>
+
+・パーシャルファイルとは？
+    _header.ejs や、_footer.ejs のように、
+    ファイル名の前にアンダーバーをつけてパーシャルファイルとすることで、
+    コンパイルの対象外とすることができます。
+
+ejs.render() 
+    ejs.render()しなければ、ejsの文法が、文字列として、出力されてしまう。
+
+/* -------- EJSの基本的な使い方 -------- */
+EJSを、コンソール上で実行
+
+・ejs cliというnpmパッケージを使って、EJSを使っていきます。
+    $ npm init
+    $ npm install -save-dev ejs-cli
+・次に、EJSコンパイルを実行するために、
+    package.json の、scripts に追記しましょう。
+    "ejs": "ejs-cli --base-dir ejs/ 'index.ejs' --out dest/"
+    ejs-cli --base-dir 参照するディレクトリ 'コンパイルするファイル' --out 出力先のディレクトリ名
+・ejsファイルの準備
+    ejsディレクトリの中に、
+    index.ejs, _header.ejs, _footer.ejs を作ります。
+・ejsファイルに記述
+    ejs記法を用いて、ejsファイルを編集します。
+    include()は、他のejsファイルを、読み込みます。
+    <%- include('_header') %>
+    <%- elem %>
+    <%- include('_footer') %>
+・ejsファイルを実行
+    package.jsonのscriptsに登録した、コンパイルコマンドを実行する。
+    npm run ejs
+
+/* ---------------------------------- */
+EJSを、Node.jsに組み込んで、httpレスポンスとして、返す。
+
+// index.ejs の内容を読み込みます。(ejs.render()メソッドにかけるために)
+const template = fs.readFileSync('./ejs/index.ejs','utf-8',(err,data)=>{
+    if(err){console.log('エラー発生だっちゃ' + err)}
+})
+
+// ejs.render()メソッドで、htmlに変換して、responseとして返す。
+case '/cont02':
+    let rend_ejs = ejs.render(template,{title:'タイトルやで'})
+    res.writeHead(200,{'Content-Type':'text/html'})
+    res.write(rend_ejs)
+    res.end()
+    break
+
+/* ---------------------------------- */
+別のEJSファイルを、includeを使わないで、取り込む
+
+// ejs.render()メソッドの、引数に、レンダリングしたEJSファイルを
+// 指定することで、別EJSファイルを取り込むことに成功した。
+
+const temp_header = fs.readFileSync('./ejs/_header.ejs','utf-8',(err,data)=>{
+    if(err){console.log('エラー発生だっちゃ' + err)}
+})
+const temp_footer = fs.readFileSync('./ejs/_footer.ejs','utf-8',(err,data)=>{
+    if(err){console.log('エラー発生だっちゃ' + err)}
+})
+
+case '/cont02':
+    let header = ejs.render(temp_header)
+    let footer = ejs.render(temp_footer)
+    let rend_temp = ejs.render(template,{title:header,foot:footer})
+    res.writeHead(200,{'Content-Type':'text/html'})
+    res.write(rend_temp)
+    res.end()
+    break
+
+/* ---------------------------------- */
+EJSを使って、JSONファイルの値を出力してみよう。
+(なんか、JSONファイルから、値を取り出せなかった。多分、jsonデータの記法に問題があると思う)
+
+・jsonデータを格納した、data.jsonファイルを作ります。
+
+・下記のようなフォルダ構成にします。
+ejs-practice（プロジェクト名）
+ L dest
+  L index.html
+ L ejs
+  L about (NEW)
+   L index.ejs (NEW)
+  L index.ejs
+  L parts
+   L _header.ejs
+   L _footer.ejs
+ L package-json
+ L package-lock.json
+ L node_modules
+ L data.json (NEW)
+
+・次にこのJSONファイルを読み込むために
+    package.jsonのscriptsを、書き換えます。
+    "scripts": {
+        "ejs": "ejs-cli --base-dir ejs/ '**/*.ejs' -e 'parts/' --out dest/ -O data.json"
+    }
+    -O => -optionsの省略で読み込ませたいJSONファイルや、ファイルパスを記述します。
+    -e => 出力しないディレクトリ名、ファイルを指定するものです。
+
+・JSONファイルの値を、ejsファイルに読み込ませる。
+    <%- data.about.title %> のように、ejs記法を用いて、記述します。
+
+/* ---------------------------------- */
